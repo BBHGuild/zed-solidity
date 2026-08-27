@@ -23,6 +23,14 @@
     "use_new_terminal": false
   },
   {
+    "label": "forge debug: $ZED_SYMBOL",
+    "command": "forge",
+    "args": ["test", "--match-test", "$ZED_SYMBOL", "--debug"],
+    "tags": ["solidity-test"],
+    "reveal": "always",
+    "use_new_terminal": false
+  },
+  {
     "label": "forge test: $ZED_SYMBOL (contract)",
     "command": "forge",
     "args": ["test", "--match-contract", "$ZED_SYMBOL", "-vvvvv"],

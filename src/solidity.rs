@@ -73,6 +73,40 @@ impl zed::Extension for SolidityExtension {
         worktree: &zed::Worktree,
     ) -> Result<zed::Command> {
         if language_server_id.as_ref() == "solar" {
+            if let Ok(lsp_settings) =
+                zed::settings::LspSettings::for_worktree(language_server_id.as_ref(), worktree)
+            {
+                if let Some(binary) = lsp_settings.binary {
+                    let forge_cmd = if let Some(path) = binary.path {
+                        path
+                    } else {
+                        worktree
+                            .which("forge")
+                            .or_else(|| {
+                                let home = env::var("HOME").ok()?;
+                                let default_path = format!("{home}/.foundry/bin/forge");
+                                if fs::metadata(&default_path).map_or(false, |m| m.is_file()) {
+                                    Some(default_path)
+                                } else {
+                                    None
+                                }
+                            })
+                            .ok_or_else(|| {
+                                "forge executable not found in PATH or ~/.foundry/bin/forge".to_string()
+                            })?
+                    };
+
+                    let args = binary.arguments.unwrap_or_else(|| vec!["lsp".to_string()]);
+                    let env = binary.env.unwrap_or_default().into_iter().collect();
+
+                    return Ok(zed::Command {
+                        command: forge_cmd,
+                        args,
+                        env,
+                    });
+                }
+            }
+
             let forge_path = worktree
                 .which("forge")
                 .or_else(|| {
