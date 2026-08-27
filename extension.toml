@@ -6,6 +6,13 @@ authors = ["Daniel Zarifpour <z@rifpour.xyz>", "Jacob Czepluch <zed-solidity.gul
 description = "💠 Solidity language support for Zed. ✰ and report issues ➩"
 repository = "https://github.com/zarifpour/zed-solidity"
 
+[language_servers.solar]
+name = "Solar (Foundry) LSP"
+languages = ["Solidity"]
+
+[language_servers.solar.language_ids]
+"Solidity" = "solidity"
+
 [language_servers.solidity]
 name = "Solidity Language Server"
 languages = ["Solidity"]
