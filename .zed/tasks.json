@@ -14,18 +14,20 @@
   // ============================================================================
   // FOUNDRY (Forge)
   // ============================================================================
+  // $ZED_CUSTOM_contract is the contract enclosing the test (captured by runnables.scm),
+  // so identically named tests in other contracts are not run as well.
   {
-    "label": "forge test: $ZED_SYMBOL",
+    "label": "forge test: $ZED_CUSTOM_contract::$ZED_SYMBOL",
     "command": "forge",
-    "args": ["test", "--match-test", "$ZED_SYMBOL", "-vvvvv"],
+    "args": ["test", "--match-contract", "$ZED_CUSTOM_contract", "--match-test", "$ZED_SYMBOL", "-vvvvv"],
     "tags": ["solidity-test"],
     "reveal": "always",
     "use_new_terminal": false
   },
   {
-    "label": "forge debug: $ZED_SYMBOL",
+    "label": "forge debug: $ZED_CUSTOM_contract::$ZED_SYMBOL",
     "command": "forge",
-    "args": ["test", "--match-test", "$ZED_SYMBOL", "--debug"],
+    "args": ["test", "--match-contract", "$ZED_CUSTOM_contract", "--match-test", "$ZED_SYMBOL", "--debug"],
     "tags": ["solidity-test"],
     "reveal": "always",
     "use_new_terminal": false
