@@ -24,6 +24,11 @@
   "hex" @string.special.symbol
   (_) @string)
 
+(yul_hex_string_literal
+  "hex" @string.special.symbol)
+
+(yul_hex_string_literal) @string
+
 (unicode_string_literal
   "unicode" @string.special.symbol
   (_) @string)
@@ -69,6 +74,11 @@
 
 (enum_declaration
   name: (identifier) @type)
+
+(user_defined_type_definition
+  "type" @keyword.type
+  name: (identifier) @type
+  "is" @keyword)
 
 (emit_statement
   .
@@ -151,7 +161,6 @@
   "modifier"
   "var"
   "let"
-  "emit"
   "error"
   "fallback"
   "receive"
@@ -199,6 +208,8 @@
   "do"
   "break"
   "continue"
+  (yul_break)
+  (yul_continue)
 ] @keyword.repeat
 
 [
@@ -280,8 +291,8 @@
   "+"
   "-"
   "*"
-  "/"
   "%"
+  "/"
   "**"
   "="
   "<"
@@ -292,8 +303,6 @@
   ">"
   "!"
   "~"
-  "-"
-  "+"
   "++"
   "--"
   ":="

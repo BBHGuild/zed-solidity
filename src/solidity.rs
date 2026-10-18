@@ -11,7 +11,7 @@ struct SolidityExtension {
 
 impl SolidityExtension {
     fn server_exists(&self) -> bool {
-        fs::metadata(SERVER_PATH).map_or(false, |stat| stat.is_file())
+        fs::metadata(SERVER_PATH).is_ok_and(|stat| stat.is_file())
     }
 
     fn server_script_path(
@@ -60,12 +60,12 @@ impl SolidityExtension {
     }
 }
 
-/// Locate `forge`: worktree `PATH` first, then the default foundryup install
-/// location. The extension runs in a WASM sandbox where neither the host's
+/// Locate `forge` (or `solar`): worktree `PATH` first, then the default foundryup
+/// install location. The extension runs in a WASM sandbox where neither the host's
 /// `HOME` nor host files are visible, so `HOME` is read from the worktree's
 /// shell environment and the default path is returned without probing it.
 fn find_forge(worktree: &zed::Worktree, shell_env: &[(String, String)]) -> Result<String> {
-    if let Some(path) = worktree.which("forge") {
+    if let Some(path) = worktree.which("forge").or_else(|| worktree.which("solar")) {
         return Ok(path);
     }
     shell_env
@@ -132,11 +132,38 @@ impl zed::Extension for SolidityExtension {
             .to_string_lossy()
             .to_string();
 
+        let mut server_args = vec![server_full_path];
+        server_args.extend(args.unwrap_or_else(|| vec!["--stdio".to_string()]));
+
         Ok(zed::Command {
             command: zed::node_binary_path()?,
-            args: vec![server_full_path, "--stdio".to_string()],
+            args: server_args,
             env,
         })
+    }
+
+    fn language_server_initialization_options(
+        &mut self,
+        language_server_id: &zed::LanguageServerId,
+        worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        let initialization_options =
+            zed::settings::LspSettings::for_worktree(language_server_id.as_ref(), worktree)
+                .ok()
+                .and_then(|settings| settings.initialization_options);
+        Ok(initialization_options)
+    }
+
+    fn language_server_workspace_configuration(
+        &mut self,
+        language_server_id: &zed::LanguageServerId,
+        worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        let settings =
+            zed::settings::LspSettings::for_worktree(language_server_id.as_ref(), worktree)
+                .ok()
+                .and_then(|settings| settings.settings);
+        Ok(settings)
     }
 }
 

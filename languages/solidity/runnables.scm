@@ -19,7 +19,7 @@
 ; Plain source contracts get no run button.
 (
   (contract_declaration
-    name: (identifier) @run
+    name: (identifier) @run @contract
     body: (contract_body
       (function_definition
         name: (identifier) @_test_fn

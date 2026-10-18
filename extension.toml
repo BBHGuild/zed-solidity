@@ -16,6 +16,7 @@ languages = ["Solidity"]
 [language_servers.solidity]
 name = "Solidity Language Server"
 languages = ["Solidity"]
+opt_in_languages = ["Solidity"]
 
 [language_servers.solidity.language_ids]
 "Solidity" = "solidity"

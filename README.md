@@ -7,14 +7,47 @@ Enhance Zed with Solidity language support, including syntax highlighting and la
 ### Solidity (`.sol`)
 
 - Syntax highlighting via [tree-sitter-solidity](https://github.com/JoranHonig/tree-sitter-solidity)
-- Diagnostics, completions, go-to-definition, and other LSP features via [@nomicfoundation/solidity-language-server](https://github.com/NomicFoundation/hardhat-vscode/tree/main/server)
+- Diagnostics, completions, go-to-definition, and other LSP features via **Solar (Foundry) LSP** (`forge lsp`, enabled by default) or [@nomicfoundation/solidity-language-server](https://github.com/NomicFoundation/hardhat-vscode/tree/main/server) (opt-in)
 - Code outline, indentation, and bracket matching
 
 ### Yul (`.yul`)
 
 - Syntax highlighting via [tree-sitter-yul](https://github.com/czepluch/tree-sitter-yul), including recognition of EVM builtins
 - Code outline, indentation, and bracket matching
-- No LSP support (the Nomic Foundation language server does not support standalone `.yul` files)
+- No LSP support (the language servers do not support standalone `.yul` files)
+
+## Language Servers
+
+By default, this extension launches **Solar (Foundry) LSP** via `forge lsp` (falling back to `solar lsp` or `~/.foundry/bin/forge lsp`). You can customize the binary, arguments, environment, or LSP initialization options in Zed's `settings.json`:
+
+```json
+{
+  "lsp": {
+    "solar": {
+      "binary": {
+        "path": "forge",
+        "arguments": ["lsp"]
+      },
+      "initialization_options": {
+        "codeLens": true,
+        "flychecks": true
+      }
+    }
+  }
+}
+```
+
+To use the Nomic Foundation language server (`@nomicfoundation/solidity-language-server`) instead, enable `"solidity"` in your language settings:
+
+```json
+{
+  "languages": {
+    "Solidity": {
+      "language_servers": ["solidity", "!solar"]
+    }
+  }
+}
+```
 
 > [!Tip]
 > For the best experience, it is highly recommended to use [XY-Zed](https://github.com/zarifpour/xy-zed). This extension has been built on top of the XY-Zed theme, ensuring that all colors are thoughtfully chosen to provide intelligent syntax highlighting.
@@ -32,14 +65,14 @@ Example tasks for different test frameworks can be found in [.zed/tasks.json](.z
 How to set up Foundry to run tests via a runnable (the play button next to tests
 in the UI) and via keyboard shortcut.
 
-Example task that connect with the definitions in [runnables.scm](languages/solidity/runnables.scm) via tags.
+Example tasks that connect with the definitions in [runnables.scm](languages/solidity/runnables.scm) via tags:
 ```json
 [
-  // Individual test.
+  // Individual test (scoped to enclosing contract).
   {
-    "label": "forge test: $ZED_SYMBOL",
+    "label": "forge test: $ZED_CUSTOM_contract::$ZED_SYMBOL",
     "command": "forge",
-    "args": ["test", "--match-test", "$ZED_SYMBOL", "-vvvvv"],
+    "args": ["test", "--match-contract", "$ZED_CUSTOM_contract", "--match-test", "$ZED_SYMBOL", "-vvvvv"],
     "tags": ["solidity-test"],
     "reveal": "always",
     "use_new_terminal": false
@@ -56,13 +89,13 @@ Example task that connect with the definitions in [runnables.scm](languages/soli
 ]
 ```
 
-Example keymap to run Forge test for the symbol under the cursor.
+Example keymap to run Forge test for the symbol under the cursor:
 ```json
 [
   {
-    "context": "Editor && extension==sol",
+    "context": "Editor && extension == sol",
     "bindings": {
-      "alt-g": ["task::Spawn", { "task_name": "forge test: $ZED_SYMBOL" }]
+      "alt-g": ["task::Spawn", { "task_name": "forge test: $ZED_CUSTOM_contract::$ZED_SYMBOL" }]
     }
   }
 ]
