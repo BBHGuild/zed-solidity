@@ -18,7 +18,7 @@ Enhance Zed with Solidity language support, including syntax highlighting and la
 
 ## Language Servers
 
-By default, this extension launches **Solar (Foundry) LSP** via `forge lsp` (falling back to `solar lsp` or `~/.foundry/bin/forge lsp`). You can customize the binary, arguments, environment, or LSP initialization options in Zed's `settings.json`:
+By default, this extension launches **Solar (Foundry) LSP** via `forge lsp` (falling back to `~/.foundry/bin/forge lsp`). You can customize the binary, arguments, environment, or LSP initialization options in Zed's `settings.json`:
 
 ```json
 {
@@ -29,8 +29,8 @@ By default, this extension launches **Solar (Foundry) LSP** via `forge lsp` (fal
         "arguments": ["lsp"]
       },
       "initialization_options": {
-        "codeLens": true,
-        "flychecks": true
+        "sourceChangeDebounce": 300,
+        "codeLens": { "references": false, "inheritance": false }
       }
     }
   }

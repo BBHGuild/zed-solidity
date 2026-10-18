@@ -60,12 +60,12 @@ impl SolidityExtension {
     }
 }
 
-/// Locate `forge` (or `solar`): worktree `PATH` first, then the default foundryup
-/// install location. The extension runs in a WASM sandbox where neither the host's
+/// Locate `forge`: worktree `PATH` first, then the default foundryup install
+/// location. The extension runs in a WASM sandbox where neither the host's
 /// `HOME` nor host files are visible, so `HOME` is read from the worktree's
 /// shell environment and the default path is returned without probing it.
 fn find_forge(worktree: &zed::Worktree, shell_env: &[(String, String)]) -> Result<String> {
-    if let Some(path) = worktree.which("forge").or_else(|| worktree.which("solar")) {
+    if let Some(path) = worktree.which("forge") {
         return Ok(path);
     }
     shell_env
